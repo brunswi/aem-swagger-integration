@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workspaceFilter version="1.0">
+    <filter root="/apps/openapi-integration/clientlibs"/>
+    <filter root="/apps/openapi-integration/components"/>
+    <filter root="/apps/openapi-integration/i18n"/>
+</workspaceFilter>
