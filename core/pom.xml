@@ -91,6 +91,11 @@ Import-Package: javax.annotation;version=0.0.0,*
             <artifactId>aem-sdk-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.mysite</groupId>
+            <artifactId>openapi-integration.petstore</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.adobe.cq</groupId>
             <artifactId>core.wcm.components.core</artifactId>
             <scope>test</scope>

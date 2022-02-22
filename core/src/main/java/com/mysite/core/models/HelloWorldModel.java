@@ -17,21 +17,27 @@ package com.mysite.core.models;
 
 import static org.apache.sling.api.resource.ResourceResolver.PROPERTY_RESOURCE_TYPE;
 
+import com.day.cq.wcm.api.Page;
+import com.day.cq.wcm.api.PageManager;
+import com.mysite.petstore.api.PetApi;
+import com.mysite.petstore.invoker.ApiClient;
+import com.mysite.petstore.invoker.ApiException;
+import com.mysite.petstore.model.Pet;
+import com.mysite.petstore.model.Pet.StatusEnum;
+import java.util.List;
+import java.util.Optional;
 import javax.annotation.PostConstruct;
-
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.InjectionStrategy;
-import org.apache.sling.models.annotations.injectorspecific.OSGiService;
 import org.apache.sling.models.annotations.injectorspecific.SlingObject;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
-
-import com.day.cq.wcm.api.Page;
-import com.day.cq.wcm.api.PageManager;
-
-import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Model(adaptables = Resource.class)
 public class HelloWorldModel {
@@ -47,6 +53,8 @@ public class HelloWorldModel {
 
     private String message;
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     @PostConstruct
     protected void init() {
         PageManager pageManager = resourceResolver.adaptTo(PageManager.class);
@@ -57,6 +65,35 @@ public class HelloWorldModel {
         message = "Hello World!\n"
             + "Resource type is: " + resourceType + "\n"
             + "Current page is:  " + currentPagePath + "\n";
+        try {
+            CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+            ApiClient defaultClient = new ApiClient(httpClient);
+            defaultClient.setBasePath("https://petstore3.swagger.io/api/v3");
+            PetApi apiInstance = new PetApi(defaultClient);
+            message += "\nCome visit our Pet Store!";
+            // list available pets
+            message += "\nCurrently in Stock:\n";
+            message += listPets(apiInstance, StatusEnum.AVAILABLE);
+            // list pending pets
+            message += "\nPending:\n";
+            message += listPets(apiInstance, StatusEnum.PENDING);
+            // list sold pets
+            message += "\nAlready Sold:\n";
+            message += listPets(apiInstance, StatusEnum.SOLD);
+        } catch (ApiException e) {
+            message += "\nError while requesting pets: " + e.getMessage();
+            logger.warn(e.getMessage(), e);
+        }
+
+    }
+
+    private String listPets(PetApi apiInstance, StatusEnum status) throws ApiException {
+        StringBuilder message = new StringBuilder();
+        List<Pet> pets = apiInstance.findPetsByStatus(status.getValue());
+        for(Pet pet: pets) {
+            message.append(pet.getName()).append("\n");
+        }
+        return message.toString();
     }
 
     public String getMessage() {

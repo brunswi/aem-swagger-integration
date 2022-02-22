@@ -61,6 +61,16 @@
                             <target>/apps/openapi-integration-packages/application/install</target>
                         </embedded>
                         <embedded>
+                            <groupId>io.swagger</groupId>
+                            <artifactId>swagger-annotations</artifactId>
+                            <target>/apps/openapi-integration-vendor-packages/application/install</target>
+                        </embedded>
+                        <embedded>
+                            <groupId>com.mysite</groupId>
+                            <artifactId>openapi-integration.petstore</artifactId>
+                            <target>/apps/openapi-integration-vendor-packages/application/install</target>
+                        </embedded>
+                        <embedded>
                             <groupId>com.mysite</groupId>
                             <artifactId>openapi-integration.core</artifactId>
                             <target>/apps/openapi-integration-packages/application/install</target>
@@ -196,6 +206,10 @@
             <version>${project.version}</version>
             <type>zip</type>
         </dependency>
-
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>${swagger-annotations-version}</version>
+        </dependency>
     </dependencies>
 </project>
